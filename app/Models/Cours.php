@@ -1,25 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Models;
 
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Model;
 
-class CoursController extends Controller
+class Cours extends Model
 {
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nom' => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
+    protected $table = 'cours'; // Nom exact de la table
+    protected $primaryKey = 'id';
+    public $timestamps = false; // Désactiver la gestion automatique des timestamps
 
-        $coursId = \DB::table('cours')->insertGetId([
-            'nom' => $request->nom,
-            'description' => $request->description,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        return response()->json(['message' => 'Cours ajouté', 'id' => $coursId], 201);
-    }
+    protected $fillable = ['nom', 'description', 'created_at'];
 }

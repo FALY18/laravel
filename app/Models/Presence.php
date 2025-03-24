@@ -10,7 +10,7 @@ class Presence extends Model
     protected $primaryKey = 'id';
     public $timestamps = true; // Si tes tables ont created_at et updated_at
 
-    protected $fillable = ['etudiant_id', 'cours_id', 'date'];
+    protected $fillable = ['etudiant_id', 'cours_id', 'date', 'session_id'];
 
     public function etudiant()
     {

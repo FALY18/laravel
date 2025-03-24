@@ -13,17 +13,21 @@ class CoursController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:100',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'nom' => 'required|string|max:100',
+                'description' => 'nullable|string',
+            ]);
 
-        $coursId = \DB::table('cours')->insertGetId([
-            'nom' => $request->nom,
-            'description' => $request->description,
-            'created_at' => now(),
-        ]);
+            \DB::table('cours')->insert([
+                'nom' => $request->nom,
+                'description' => $request->description,
+                'created_at' => now(),
+            ]);
 
-        return redirect()->route('dashboard')->with('success', 'Cours ajouté avec succès !');
+            return redirect()->route('dashboard')->with('success', 'Cours ajouté avec succès !');
+        } catch (\Exception $e) {
+            return redirect()->route('cours.create')->with('error', 'Erreur lors de l\'ajout du cours : ' . $e->getMessage());
+        }
     }
 }

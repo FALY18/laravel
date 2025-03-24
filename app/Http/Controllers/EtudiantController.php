@@ -14,25 +14,29 @@ class EtudiantController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'nom' => 'required|string|max:100',
-            'prenom' => 'required|string|max:100',
-            'photo' => 'nullable|image|max:2048',
-        ]);
+        try {
+            $request->validate([
+                'nom' => 'required|string|max:100',
+                'prenom' => 'required|string|max:100',
+                'photo' => 'nullable|image|max:2048',
+            ]);
 
-        $photoUrl = null;
-        if ($request->hasFile('photo')) {
-            $photoUrl = $request->file('photo')->store('photos', 'public');
-            $photoUrl = Storage::url($photoUrl);
+            $photoUrl = null;
+            if ($request->hasFile('photo')) {
+                $photoUrl = $request->file('photo')->store('photos', 'public');
+                $photoUrl = Storage::url($photoUrl);
+            }
+
+            $etudiantId = \DB::table('etudiant')->insertGetId([
+                'nom' => $request->nom,
+                'prenom' => $request->prenom,
+                'photo_url' => $photoUrl,
+                'created_at' => now(),
+            ]);
+
+            return redirect()->route('dashboard')->with('success', 'Étudiant ajouté avec succès !');
+        } catch (\Exception $e) {
+            return redirect()->route('dashboard')->with('error', 'Erreur lors de l\'ajout de l\'étudiant : ' . $e->getMessage());
         }
-
-        $etudiantId = \DB::table('etudiant')->insertGetId([
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'photo_url' => $photoUrl,
-            'created_at' => now(),
-        ]);
-
-        return redirect()->route('dashboard')->with('success', 'Étudiant ajouté avec succès !');
     }
 }

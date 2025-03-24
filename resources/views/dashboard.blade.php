@@ -1,125 +1,156 @@
-@extends('layouts.app')
+<!-- resources/views/dashboard.blade.php -->
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Tableau de Bord') }}
+        </h2>
+    </x-slot>
 
-@section('content')
-    <h1>Dashboard</h1>
-    <div class="row">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Taux d'assiduité</h5>
-                    <p class="card-text">{{ $taux_assiduite }}%</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Nombre d'étudiants</h5>
-                    <p class="card-text">{{ $total_etudiants }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Présences / Absences</h5>
-                    <p class="card-text">Présences : {{ $presences }} | Absences : {{ $absences }}</p>
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-4 text-gray-900">
+                    <h1 class="text-center mb-3 text-xl font-semibold">{{ __('Tableau de Bord') }}</h1>
+
+                    <!-- Conteneur principal avec deux colonnes -->
+                    <div class="flex flex-col lg:flex-row gap-4">
+                        <!-- Colonne gauche : Graphique -->
+                        <div class="lg:w-2/3 w-full">
+                            <div class="card shadow-lg bg-gray-100"> <!-- Fond gris clair -->
+                                <div class="card-body p-4">
+                                    <h3 class="card-title text-lg font-semibold mb-2 text-gray-800">{{ __('Évolution de l\'Assiduité par Cours (par Mois)') }}</h3>
+                                    <!-- Filtre pour sélectionner l'année -->
+                                    <div class="mb-2">
+                                        <label for="annee" class="form-label font-medium text-sm text-gray-700">{{ __('Année') }} :</label>
+                                        <select id="annee" class="form-select w-full sm:w-32 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 text-sm" onchange="window.location.href='?annee='+this.value">
+                                            @for ($year = now()->year; $year >= now()->year - 5; $year--)
+                                                <option value="{{ $year }}" {{ $annee == $year ? 'selected' : '' }}>{{ $year }}</option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                    @if (empty($evolutionAssiduite) || count($evolutionAssiduite) === 0 || empty($evolutionAssiduite[0]['data']))
+                                        <p class="text-muted text-center text-gray-500 text-sm">{{ __('Aucune donnée disponible pour le graphique. Ajoutez des cours et des présences pour voir les statistiques.') }}</p>
+                                    @else
+                                        <canvas id="evolutionAssiduiteChart" data-evolution-assiduite="{{ json_encode($evolutionAssiduite) }}" width="400" height="150"></canvas>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Colonne droite : Statistiques générales -->
+                        <div class="lg:w-1/3 w-full">
+                            <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg shadow-lg"> <!-- Ajout de bg-gray-100, p-4 et rounded-lg -->
+                                <div class="card text-white bg-primary shadow-lg rounded-lg">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-base font-semibold">{{ __('Total Étudiants') }}</h5>
+                                        <p class="card-text text-3xl font-bold">{{ $totalEtudiants }}</p>
+                                    </div>
+                                </div>
+                                <div class="card text-white bg-info shadow-lg rounded-lg">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-base font-semibold">{{ __('Total Cours') }}</h5>
+                                        <p class="card-text text-3xl font-bold">{{ $totalCours }}</p>
+                                    </div>
+                                </div>
+                                <div class="card text-white bg-secondary shadow-lg rounded-lg">
+                                    <div class="card-body p-3">
+                                        <h5 class="card-title text-base font-semibold">{{ __('Taux d\'Assiduité') }}</h5>
+                                        <p class="card-text text-xl">{{ number_format($tauxAssiduite, 2) }}%</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Section pour le graphique -->
-    <div class="mt-5">
-        <h2>Taux de présence par matière</h2>
-        <p><em>Données officielles - Non modifiables</em></p>
-        <div style="position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto;">
-            <canvas id="tauxParCoursChart" data-taux-par-cours="{{ json_encode($taux_par_cours) }}"></canvas>
-        </div>
-    </div>
-@endsection
+    @push('scripts')
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const canvas = document.getElementById('evolutionAssiduiteChart');
+                if (!canvas) {
+                    console.error('Canvas element not found');
+                    return;
+                }
 
-@section('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('Script inline chargé.');
+                const evolutionData = JSON.parse(canvas.dataset.evolutionAssiduite);
+                console.log('Données pour le graphique :', evolutionData);
 
-            // Vérifier si Chart.js est chargé
-            if (typeof Chart === 'undefined') {
-                console.error('Chart.js n\'est pas chargé !');
-                return;
-            } else {
-                console.log('Chart.js est chargé:', Chart);
-            }
+                if (!evolutionData || evolutionData.length === 0 || !evolutionData[0].data || evolutionData[0].data.length === 0) {
+                    console.error('Aucune donnée valide pour le graphique');
+                    return;
+                }
 
-            // Récupérer les données de taux par cours depuis l'attribut data
-            const canvas = document.getElementById('tauxParCoursChart');
-            if (!canvas) {
-                console.error('Élément canvas #tauxParCoursChart introuvable !');
-                return;
-            }
+                // Générer les labels (mois) pour janvier à décembre
+                const allMonths = evolutionData[0].data.map(point => point.month);
+                allMonths.sort();
 
-            const tauxParCours = JSON.parse(canvas.getAttribute('data-taux-par-cours')) || [];
-            console.log('Données récupérées:', tauxParCours);
+                const labels = allMonths.map(month => {
+                    const d = new Date(month + '-01');
+                    return d.toLocaleDateString('en-US', { month: 'short' });
+                });
 
-            // Préparer les labels (noms des cours) et les données (taux)
-            const labels = tauxParCours.map(item => item.nom);
-            const data = tauxParCours.map(item => item.taux);
-            console.log('Labels pour le graphique:', labels);
-            console.log('Données pour le graphique:', data);
+                const datasets = evolutionData.map((cours, index) => {
+                    const colors = [
+                        'rgba(54, 162, 235, 1)',  // Bleu
+                        'rgba(255, 99, 132, 1)',  // Rouge
+                        'rgba(75, 192, 192, 1)',  // Vert
+                        'rgba(255, 206, 86, 1)',  // Jaune
+                        'rgba(153, 102, 255, 1)', // Violet
+                        'rgba(255, 159, 64, 1)',  // Orange
+                    ];
+                    const color = colors[index % colors.length];
 
-            // Créer le graphique avec Chart.js
-            if (labels.length > 0 && data.length > 0) {
-                console.log('Création du graphique...');
+                    const data = allMonths.map(month => {
+                        const point = cours.data.find(p => p.month === month);
+                        return point ? point.taux : 0;
+                    });
+
+                    return {
+                        label: cours.nom,
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: color,
+                        fill: false,
+                        tension: 0.1,
+                        pointRadius: 2,
+                        pointHoverRadius: 4,
+                    };
+                });
+
                 const ctx = canvas.getContext('2d');
                 new Chart(ctx, {
-                    type: 'bar',
+                    type: 'line',
                     data: {
                         labels: labels,
-                        datasets: [{
-                            label: 'Taux de présence (%)',
-                            data: data,
-                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
-                            borderWidth: 1,
-                            barThickness: 20, // Réduire la largeur des barres
-                        }]
+                        datasets: datasets,
                     },
                     options: {
-                        maintainAspectRatio: false, // Permet au graphique de s'adapter au conteneur
-                        responsive: true, // Active la responsivité
                         scales: {
                             y: {
                                 beginAtZero: true,
                                 max: 100,
                                 title: {
                                     display: true,
-                                    text: 'Taux de présence (%)',
-                                    font: {
-                                        size: 12 // Réduire la taille de la police
-                                    }
+                                    text: 'Taux d\'Assiduité (%)',
+                                    font: { size: 12 }
                                 },
                                 ticks: {
-                                    font: {
-                                        size: 10 // Réduire la taille des ticks
-                                    }
+                                    stepSize: 20,
+                                    font: { size: 10 }
                                 }
                             },
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Matières',
-                                    font: {
-                                        size: 12
-                                    }
+                                    text: 'Mois',
+                                    font: { size: 12 }
                                 },
                                 ticks: {
-                                    font: {
-                                        size: 10
-                                    },
-                                    autoSkip: true, // Évite le chevauchement des labels
-                                    maxRotation: 45, // Rotation des labels si trop de matières
-                                    minRotation: 0
+                                    maxTicksLimit: 12,
+                                    font: { size: 10 }
                                 }
                             }
                         },
@@ -128,24 +159,27 @@
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    font: {
-                                        size: 12
-                                    }
+                                    font: { size: 10 }
                                 }
                             },
                             tooltip: {
-                                enabled: false // Désactiver les tooltips pour éviter l'interaction
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        const month = allMonths[tooltipItems[0].dataIndex];
+                                        const d = new Date(month + '-01');
+                                        return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+                                    },
+                                    label: function(context) {
+                                        const coursNom = context.dataset.label;
+                                        const taux = context.parsed.y;
+                                        return `${coursNom}: ${taux}%`;
+                                    }
+                                }
                             }
-                        },
-                        interaction: {
-                            mode: 'none' // Désactiver toutes les interactions (clics, survols, etc.)
                         }
                     }
                 });
-                console.log('Graphique créé avec succès.');
-            } else {
-                console.warn('Aucune donnée disponible pour le graphique (labels ou data vide).');
-            }
-        });
-    </script>
-@endsection
+            });
+        </script>
+    @endpush
+</x-app-layout>
