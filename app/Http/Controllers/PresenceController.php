@@ -14,16 +14,13 @@ class PresenceController extends Controller
             // Récupérer tous les cours
             $cours = \DB::table('cours')->get();
 
-            // Si une sélection est déjà validée (via session), la réutiliser
             $selectedCoursId = session()->get('selected_cours_id');
             $selectedDateTime = session()->get('selected_date_time');
             $sessionId = session()->get('session_id');
 
-            // Récupérer les étudiants et convertir en collection
             $etudiantsRaw = $selectedCoursId ? \DB::table('etudiant')->get() : [];
             $etudiants = collect($etudiantsRaw);
 
-            // Récupérer le type de filtre (tous, présents, absents) depuis la session, par défaut "tous"
             $filterType = session()->get('filter_type', 'tous');
 
             // Filtrer les étudiants selon le type pour la session actuelle

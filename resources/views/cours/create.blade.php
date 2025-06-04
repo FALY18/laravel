@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-2xl font-bold text-gray-900">
-            {{ __('Créer un un activité ou cours') }}
+            {{ __('Créer un activité ou cours') }}
         </h2>
     </x-slot>
 
@@ -12,17 +12,6 @@
                     <h1 class="text-center text-2xl font-bold text-blue-600 mb-6">
                         {{ __('Nouveaux activité/cours') }}
                     </h1>
-
-                    <!-- Affichage des erreurs -->
-                    @if ($errors->any())
-                        <div class="mb-4 p-3 bg-red-100 text-red-700 border border-red-300 rounded-lg">
-                            <ul class="list-disc list-inside">
-                                @foreach ($errors->all() as $error)
-                                    <li>⚠️ {{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
 
                     <form method="POST" action="{{ route('cours.store') }}">
                         @csrf
@@ -51,8 +40,8 @@
 
                         <!-- Aperçu de la description -->
                         <div class="mb-4 p-3 bg-gray-100 rounded-md border border-gray-300">
-                            <h3 class="font-semibold text-gray-700 mb-2">Aperçu :</h3>
-                            <p id="preview" class="text-gray-600 italic">Votre description apparaîtra ici...</p>
+                            <h3 class="font-semibold text-gray-700 mb-2">-- </h3>
+                            <p id="preview" class="text-gray-600 italic">votre desciption</p>
                         </div>
 
                         <!-- Champ caché pour envoyer la description -->
@@ -62,12 +51,12 @@
                         <div class="flex space-x-40 items-center mt-4">
                             <a href="{{ route('cours.create') }}"
                                class="px-4 py-2 bg-gray-500 text-white text-sm font-semibold rounded-md shadow-md hover:bg-gray-600 transition duration-150">
-                                ❌ {{ __('Annuler') }}
+                                 {{ __('Annuler') }}
                             </a>
 
                             <button type="submit"
                                     class="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded-md shadow-md hover:bg-green-700 transition duration-150">
-                                ➕ {{ __('Ajouter') }}
+                                 {{ __('Ajouter') }}
                             </button>
                         </div>
                     </form>
@@ -76,8 +65,9 @@
         </div>
     </div>
 
-    <!-- Script -->
-    @push('scripts')
+
+
+	@push('scripts')
         <script>
             function updatePreview() {
                 let inputText = document.getElementById('descriptionInput').value;
@@ -92,30 +82,17 @@
                     preview.classList.remove("italic", "text-gray-600");
                 }
 
-                // Met à jour la valeur du champ caché
                 hiddenInput.value = inputText;
             }
 
             document.addEventListener("DOMContentLoaded", function () {
                 updatePreview();
-                
-                // SweetAlert pour message de succès ou erreur
-                @if (session('success'))
-                    Swal.fire({
-                        icon: 'success',
-                        title: '{{ __('Succès') }}',
-                        text: '{{ session('success') }}',
-                        confirmButtonText: '{{ __('OK') }}',
-                        confirmButtonColor: '#2563eb',
-                    });
-                @elseif (session('error'))
-                    Swal.fire({
-                        icon: 'error',
-                        title: '{{ __('Erreur') }}',
-                        text: '{{ session('error') }}',
-                        confirmButtonText: '{{ __('OK') }}',
-                        confirmButtonColor: '#dc2626',
-                    });
+
+                // Alertes en cas na erreur serveur ou erreurs de validation**
+                @if (session('error'))
+                    alert("Erreur\n\n{{ session('error') }}");
+                @elseif ($errors->any())
+                    alert("Erreur de validation\n\n{!! implode('\n', array_map('addslashes', $errors->all())) !!}");
                 @endif
             });
         </script>

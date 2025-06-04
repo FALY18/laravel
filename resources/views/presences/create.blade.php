@@ -1,4 +1,3 @@
-<!-- resources/views/presences/create.blade.php -->
 <x-app-layout>
    
 
@@ -57,15 +56,11 @@
                                     </div>
                                 </div>
 <hr>
-                                <!-- Changer de sélection, recherche et filtre sur la même ligne -->
                                 <div class="mb-4 mt-[20px] flex flex-col md:flex-row md:items-center md:space-x-4">
-                                    <!-- Bouton Changer de sélection (à gauche) -->
                                     <a href="{{ route('presences.resetSelection') }}" class="inline-block px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition duration-150 ease-in-out">{{ __('Changer de sélection') }}</a>
-                                    <!-- Champ de recherche (au milieu) -->
                                     <div class="flex-1">
                                         <input type="text" id="searchInput" placeholder="{{ __('Rechercher par nom ou prénom...') }}" class="w-[400px] ml-[200px] px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
                                     </div>
-                                    <!-- Formulaire de filtre (à droite) -->
                                     <form action="{{ route('presences.applyFilter') }}" method="POST" id="filterForm" class="flex items-center space-x-2">
                                         @csrf
                                         <label for="filter_type" class="text-sm font-medium text-gray-700">{{ __('') }}</label>
@@ -170,7 +165,7 @@
 
     @push('scripts')
         <script>
-            // Afficher une notification SweetAlert si un message de succès, d'erreur ou d'info est présent
+            //---- Afficheo une notification SweetAlert si un message de succès, d'erreur ou d'info est présent
             @if (session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -197,12 +192,11 @@
                 });
             @endif
 
-            // Filtre dynamique automatique
             document.getElementById('filter_type').addEventListener('change', function () {
                 document.getElementById('filterForm').submit();
             });
 
-            // Recherche dynamique côté client
+            // Recherche ao am côté client
             document.getElementById('searchInput').addEventListener('input', function () {
                 const searchValue = this.value.toLowerCase();
                 const rows = document.querySelectorAll('#etudiantsBody tr');

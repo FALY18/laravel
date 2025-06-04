@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Etudiant extends Model
 {
-    protected $table = 'etudiant'; // Nom exact de la table créée dans pgAdmin
+    protected $table = 'etudiant'; 
     protected $primaryKey = 'id';
-    public $timestamps = true; // Si tes tables ont created_at et updated_at
+    public $timestamps = true; 
 
     protected $fillable = ['nom', 'prenom', 'photo_url'];
 

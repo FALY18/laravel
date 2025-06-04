@@ -10,13 +10,13 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Statistiques globales
+        // Statistiques globl
         $totalEtudiants = \DB::table('etudiant')->count();
         $totalCours = \DB::table('cours')->count();
         $totalSessions = \DB::table('presence')->select('session_id')->distinct()->count('session_id');
 
-        // Compter les présences et absences par étudiant unique (DISTINCT) pour les 30 derniers jours
-        $dateLimite = now()->subDays(30); // Période des 30 derniers jours
+        // Compter les présences et absences par étudiant unique  pour les 30 derniers jours
+        $dateLimite = now()->subDays(30); 
 
         $presences = \DB::table('presence')
             ->select('etudiant_id')
@@ -30,21 +30,19 @@ class DashboardController extends Controller
             ->distinct()
             ->count('etudiant_id');
 
-        // Calcul du taux d'assiduité global avec protection contre la division par zéro
+        // Calcul du taux d'assiduité global 
         $totalPresencesAbsences = $presences + $absences;
         $tauxAssiduite = ($totalPresencesAbsences > 0 && $totalEtudiants > 0)
             ? ($presences / $totalPresencesAbsences) * 100
             : 0;
 
-        // Déterminer l'année à afficher (par défaut : l'année en cours)
-        $annee = request('annee', now()->year); // Permettre à l'utilisateur de choisir l'année via un paramètre d'URL
-        $dateDebut = Carbon::createFromDate($annee, 1, 1)->startOfDay(); // 1er janvier de l'année
-        $dateFin = Carbon::createFromDate($annee, 12, 31)->endOfDay(); // 31 décembre de l'année
+        $annee = request('annee', now()->year); 
+        $dateDebut = Carbon::createFromDate($annee, 1, 1)->startOfDay();
+        $dateFin = Carbon::createFromDate($annee, 12, 31)->endOfDay(); 
 
-        // Récupérer tous les mois de janvier à décembre pour l'année sélectionnée
         $months = [];
         for ($month = 1; $month <= 12; $month++) {
-            $months[] = sprintf('%d-%02d', $annee, $month); // Format "YYYY-MM"
+            $months[] = sprintf('%d-%02d', $annee, $month); 
         }
 
         // Récupérer les présences et absences par cours et par mois
@@ -80,12 +78,10 @@ class DashboardController extends Controller
         foreach ($cours as $c) {
             $dataPoints = [];
             foreach ($months as $month) {
-                // Trouver les présences pour ce cours et ce mois
                 $presence = $presenceStats->where('cours_id', $c->id)
                     ->where('month', $month)
                     ->first();
 
-                // Trouver les absences pour ce cours et ce mois
                 $absence = $absenceStats->where('cours_id', $c->id)
                     ->where('month', $month)
                     ->first();
@@ -101,14 +97,12 @@ class DashboardController extends Controller
                     'taux' => round($taux, 2),
                 ];
             }
-            // Inclure tous les cours, même ceux sans données
             $evolutionAssiduite[] = [
                 'nom' => $c->nom,
                 'data' => $dataPoints,
             ];
         }
 
-        // Débogage : Vérifier les données
         Log::info('Statistiques globales', [
             'total_etudiants' => $totalEtudiants,
             'total_cours' => $totalCours,

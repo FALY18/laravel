@@ -1,8 +1,7 @@
-<!-- resources/views/etudiants/create.blade.php -->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-3xl font-bold text-gray-800 text-center">
-            👨‍🎓 {{ __('Ajouter un Étudiant') }}
+             {{ __('Ajouter un Étudiant') }}
         </h2>
     </x-slot>
 
@@ -50,7 +49,7 @@
                     <label for="photo" class="block text-sm font-medium text-gray-700 mb-2">{{ __('Photo (optionnel)') }}</label>
                     <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-500 cursor-pointer transition">
                         <input type="file" id="photo" name="photo" accept="image/*" class="hidden">
-                        <p class="text-gray-500">📷 Glissez-déposez une image ou cliquez pour sélectionner un fichier</p>
+                        <p class="text-gray-500">📷 selectionné image </p>
                         <img id="photoPreview" class="hidden mx-auto mt-3 w-36 h-36 rounded-lg shadow border border-gray-200 object-cover" alt="Aperçu de la photo">
                     </div>
                 </div>
@@ -59,20 +58,20 @@
                 <div class="flex justify-center space-x-4">
                     <button type="submit"
                             class="flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-green-700 text-white font-semibold rounded-lg shadow-md hover:from-green-700 hover:to-green-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all transform hover:scale-105 active:scale-95">
-                        ✅ {{ __('Ajouter') }}
+                         {{ __('Ajouter') }}
                     </button>
 
                     <a href="{{ route('etudiants.create') }}"
                        class="flex items-center px-6 py-3 bg-gray-500 text-white font-semibold rounded-lg shadow-md bg-bl-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all transform hover:scale-105 active:scale-95">
-                        ❌ {{ __('Annuler') }}
+                         {{ __('Annuler') }}
                     </a>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Script pour l'aperçu de l'image -->
-    @push('scripts')
+
+	@push('scripts')
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 const photoInput = document.getElementById('photo');

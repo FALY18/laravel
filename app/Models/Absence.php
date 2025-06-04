@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Absence extends Model
 {
-    protected $table = 'absence'; // Nom exact de la table créée dans pgAdmin
+    protected $table = 'absence'; 
     protected $primaryKey = 'id';
-    public $timestamps = true; // Si tes tables ont created_at et updated_at
+    public $timestamps = true; 
 
     protected $fillable = ['etudiant_id', 'cours_id', 'date', 'session_id'];
 

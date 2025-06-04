@@ -14,12 +14,10 @@
 
                     <!-- Conteneur principal avec deux colonnes -->
                     <div class="flex flex-col lg:flex-row gap-4">
-                        <!-- Colonne gauche : Graphique -->
                         <div class="lg:w-2/3 w-full">
-                            <div class="card shadow-lg bg-gray-100"> <!-- Fond gris clair -->
+                            <div class="card shadow-lg bg-gray-100">
                                 <div class="card-body p-4">
                                     <h3 class="card-title text-lg font-semibold mb-2 text-gray-800">{{ __('Évolution de l\'Assiduité par Cours (par Mois)') }}</h3>
-                                    <!-- Filtre pour sélectionner l'année -->
                                     <div class="mb-2">
                                         <label for="annee" class="form-label font-medium text-sm text-gray-700">{{ __('Année') }} :</label>
                                         <select id="annee" class="form-select w-full sm:w-32 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 text-sm" onchange="window.location.href='?annee='+this.value">
@@ -39,7 +37,7 @@
 
                         <!-- Colonne droite : Statistiques générales -->
                         <div class="lg:w-1/3 w-full">
-                            <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg shadow-lg"> <!-- Ajout de bg-gray-100, p-4 et rounded-lg -->
+                            <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg shadow-lg">
                                 <div class="card text-white bg-primary shadow-lg rounded-lg">
                                     <div class="card-body p-3">
                                         <h5 class="card-title text-base font-semibold">{{ __('Total Étudiants') }}</h5>
@@ -83,7 +81,6 @@
                     return;
                 }
 
-                // Générer les labels (mois) pour janvier à décembre
                 const allMonths = evolutionData[0].data.map(point => point.month);
                 allMonths.sort();
 
@@ -94,12 +91,12 @@
 
                 const datasets = evolutionData.map((cours, index) => {
                     const colors = [
-                        'rgba(54, 162, 235, 1)',  // Bleu
-                        'rgba(255, 99, 132, 1)',  // Rouge
-                        'rgba(75, 192, 192, 1)',  // Vert
-                        'rgba(255, 206, 86, 1)',  // Jaune
-                        'rgba(153, 102, 255, 1)', // Violet
-                        'rgba(255, 159, 64, 1)',  // Orange
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
                     ];
                     const color = colors[index % colors.length];
 
@@ -179,6 +176,10 @@
                         }
                     }
                 });
+
+                @if (session('success'))
+                    alert("Succès\n\n{{ session('success') }}");
+                @endif
             });
         </script>
     @endpush
