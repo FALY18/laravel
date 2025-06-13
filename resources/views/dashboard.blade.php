@@ -12,7 +12,7 @@
                 <div class="p-4 text-gray-900">
                     <h1 class="text-center mb-3 text-xl font-semibold">{{ __('Tableau de Bord') }}</h1>
 
-                    <!-- Conteneur principal avec deux colonnes -->
+                    <!-- Conteneur principal-->
                     <div class="flex flex-col lg:flex-row gap-4">
                         <div class="lg:w-2/3 w-full">
                             <div class="card shadow-lg bg-gray-100">
@@ -35,7 +35,7 @@
                             </div>
                         </div>
 
-                        <!-- Colonne droite : Statistiques générales -->
+                        <!--  Stat générales -->
                         <div class="lg:w-1/3 w-full">
                             <div class="flex flex-col gap-4 bg-gray-100 p-4 rounded-lg shadow-lg">
                                 <div class="card text-white bg-primary shadow-lg rounded-lg">
